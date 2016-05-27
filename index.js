@@ -1,28 +1,31 @@
+ 'use strict';
+
  const stream = require('stream');
  const through2Concurrent = require('through2-concurrent');
  const streamToArray = require('stream-to-array');
 
- 'use strict';
+ function thru(transform, flush) {
+     return new stream.Transform({
+         objectMode: true,
+         transform: (obj, enc, cb) => transform(obj, cb),
+         flush
+     });
+ }
 
- const thru = (transform, flush) => new stream.Transform({
-     objectMode: true,
-     transform,
-     flush
- });
+ function thruParallel(maxConcurrency, transform, flush) {
+     return through2Concurrent.obj({ maxConcurrency },
+         (obj, enc, cb) => transform(obj, cb), flush
+     );
+ }
 
- const thruParallel = (transform, maxConcurrency) =>
-     thruConcurrent.obj({ maxConcurrency }, transform);
-
- const devNull = require('fs').createWriteStream('/dev/null');
-
- const arrayToStream = (data) => {
+ function arrayToStream(data) {
      const newStream = new stream.Readable({ objectMode: true });
      data.forEach(item => newStream.push(item));
      newStream.push(null);
      return newStream
  };
 
- const streamToSet = (stream) => {
+ function streamToSet(stream) {
      return new Promise((resolve, reject) => {
          const set = new Set();
          stream
@@ -32,7 +35,7 @@
      })
  }
 
- const newReadable = () => {
+ function newReadable() {
      const rs = new stream.Readable({ objectMode: true });
      rs._read = () => {};
      return rs
@@ -60,14 +63,8 @@
      })
  }
 
-
- };
-
  module.exports = {
      thru,
-     Stream,
-     devNull,
-     thruConcurrent,
      thruParallel,
      arrayToStream,
      streamToArray,

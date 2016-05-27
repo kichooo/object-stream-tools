@@ -13,14 +13,15 @@
   "keywords": [
     "nodejs",
     "node",
-    "javaascript",
+    "javascript",
     "streams",
     "stream",
     "map",
     "filter",
     "reduce",
     "array",
-    "set"
+    "set",
+    "tools"
   ],
   "author": "Krzysztof Burlinski",
   "license": "MIT",

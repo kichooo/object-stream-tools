@@ -50,6 +50,19 @@ tap.test('Test filter', t =>
         .then(objs => t.same(objs, data.filter(testFilter)), t.fail)
 )
 
+tap.test('Test reduce', t =>
+    ost.streamToArray(dataStream()
+        .pipe(ost.map(obj => obj.value))
+        .pipe(ost.reduce((acc, curr, i, arr) => {
+            return acc + curr + i
+        }, 0))
+        .on('error', err => t.fail(err.stack)))
+        .then(reducedValue => {
+            // array because streamToArray
+            t.same(reducedValue, [42 + 1 + 7 + 3])
+        }, t.fail)
+)
+
 // This test is a bit more complicated. We will only let the 1st object through when second has already been called.
 tap.test('Test thruParallel', t => {
     let secondObjDone = false

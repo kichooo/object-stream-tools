@@ -1,13 +1,16 @@
 [{
     "foo": "bar",
     "szop": "pracz",
-    "cats": ["Cat 1", "Cat 2", "Cat 3"]
+    "cats": ["Cat 1", "Cat 2", "Cat 3"],
+    "value": 42
 }, {
     "foo": "foo",
     "szop": "pracz",
-    "cats": ["Cat 4", "Cat 5", "Cat 6"]
+    "cats": ["Cat 4", "Cat 5", "Cat 6"],
+    "value": 1
 }, {
     "foo": "rand",
     "szop": "niepracz",
-    "cats": ["Cat 5", "Cat 6"]
+    "cats": ["Cat 5", "Cat 6"],
+    "value": 7
 }]

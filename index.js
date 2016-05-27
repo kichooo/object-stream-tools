@@ -64,6 +64,17 @@ function filter(func) {
     })
 }
 
+function reduce(func, acc) {
+    let i = 0
+    return thru((curr, cb) => {
+        acc = func(acc, curr, i++)
+        cb()
+    }, function() {
+        this.emit('data', acc)
+        this.emit('end')
+    })
+}
+
 module.exports = {
     thru,
     thruParallel,
@@ -72,5 +83,6 @@ module.exports = {
     streamToSet,
     newReadable,
     map,
-    filter
+    filter,
+    reduce
 }

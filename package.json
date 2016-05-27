@@ -30,6 +30,7 @@
   "homepage": "https://github.com/kichooo/object-stream-tools#readme",
   "devDependencies": {
     "JSONStream": "^1.1.1",
+    "lodash": "^4.13.1",
     "tap": "^5.7.2"
   },
   "dependencies": {

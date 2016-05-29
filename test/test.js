@@ -53,7 +53,7 @@ tap.test('Test filter', t =>
 tap.test('Test reduce', t =>
     ost.streamToArray(dataStream()
         .pipe(ost.map(obj => obj.value))
-        .pipe(ost.reduce((acc, curr, i, arr) => {
+        .pipe(ost.reduce((acc, curr, i) => {
             return acc + curr + i
         }, 0))
         .on('error', err => t.fail(err.stack)))

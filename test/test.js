@@ -51,16 +51,16 @@ tap.test('Test filter', t =>
 )
 
 tap.test('Test reduce', t =>
-    ost.streamToArray(dataStream()
+    dataStream()
         .pipe(ost.map(obj => obj.value))
         .pipe(ost.reduce((acc, curr, i) => {
             return acc + curr + i
         }, 0))
-        .on('error', err => t.fail(err.stack)))
-        .then(reducedValue => {
-            // array because streamToArray
-            t.same(reducedValue, [42 + 1 + 7 + 3])
-        }, t.fail)
+        .on('data', reducedValue =>
+            t.same(reducedValue, 42 + 1 + 7 + 3))
+        .on('error', err => t.fail(err.stack))
+        .pipe(jsonStream.stringify())
+        .on('end', () => t.end())
 )
 
 // This test is a bit more complicated. We will only let the 1st object through when second has already been called.

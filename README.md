@@ -60,8 +60,25 @@ ost.streamToArray((fs.createReadStream('./test/data.json')
         return acc + curr + i
     }, 0)))
     .then(reducedValue) => {
-        // here you will get reduced value wraped in array
+        // here you will get reduced value wrapped in array
     })
+```
+
+or 
+
+```js
+const jsonStream = require('JSONStream')
+fs.createReadStream('./test/data.json')
+    .pipe(jsonStream.parse('*'))
+    .pipe(ost.map(obj => obj.requiredProperty))
+    .pipe(ost.reduce((acc, curr, i) => {
+        return acc + curr + i
+    }, 0)))
+    .on('data', reducedValue =>
+        // here you will get reduced value 
+    })
+    .pipe(jsonStream.stringify())
+    .pipe(process.stdout)
 ```
 
 ## Please look at the tests for more use cases.

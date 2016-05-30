@@ -38,10 +38,11 @@ Its very useful if you want to get unique elements / set of values
 
 ```js
 const jsonStream = require('JSONStream')
-ost.streamToSet(fs.createReadStream('./test/data.json')
+fs.createReadStream('../test/data.json')
     .pipe(jsonStream.parse('*'))
-    .pipe(ost.map(obj => obj.requiredProperty)))
-    .then(uniqueSet => {
+    .pipe(ost.map(obj => obj.requiredProperty))
+    .pipe(ost.streamToSet())
+    .on('data', uniqueSet => {
         // here one get array of unique elements
         const uniqueArray = Array.from(uniqueSet.values()).sort()
     })
@@ -53,11 +54,12 @@ ost.streamToSet(fs.createReadStream('./test/data.json')
 If you just want to remove some objects from stream, you probably want to use filter function.
 
 ```js
-ost.streamToArray(dataStream()
-    .pipe(ost.filter(e => e.property > 6)))
-    .then(filteredObjects => 
-        // here you will get filtered objects
-    )
+fs.createReadStream('../test/data.json')
+    .pipe(jsonStream.parse('*'))
+    .pipe(ost.filter(e => e.value > 6))
+    // here you will get filtered objects
+    .pipe(jsonStream.stringify())
+    .pipe(process.stdout)
 ```
 
 
@@ -106,10 +108,26 @@ fs.createReadStream('./test/data.json')
 It is a useful helper if you dealing with a lot of smaller data that are wrapped in Promise API, ex:
 
 ```js
- ost.promiseToStream(myDbQueryThatReturnPromise())
-    .on('data', data => {
-        // here you will get a real stream that you can pipe
+ost.promiseToStream(myDbQueryThatReturnPromise())
+   .on('data', data => {
+       // here you will get a real stream that you can pipe
+   })
+```
+
+
+#### stream to promise
+
+Very handy when you want to consume streams but rest of your application logic uses promises. 
+
+
+```js
+ost.streamToPromise(fs.createReadStream('../test/data.json')
+    .pipe(jsonStream.parse('*'))
+    .pipe(ost.filter(e => e.value > 6)))
+    .then(data => {
+        // here you will get filtered objects
     })
 ```
+
 
 ## Please look at the tests for more use cases.

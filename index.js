@@ -70,6 +70,16 @@ function promiseToStream(promise) {
     return newStream
 }
 
+function streamToPromise(stream) {
+    return new Promise((resolve, reject) => {
+        const arr = []
+        stream
+            .on('data', data => arr.push(data))
+            .on('error', reject)
+            .on('end', () => resolve(arr))
+    })
+}
+
 function filter(func) {
     return new stream.Transform({
         objectMode: true,
@@ -108,5 +118,6 @@ module.exports = {
     map,
     filter,
     reduce,
-    promiseToStream
+    promiseToStream,
+    streamToPromise
 }

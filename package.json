@@ -1,6 +1,6 @@
 {
   "name": "object-stream-tools",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Useful tools for manipulating object streams. Will be especially helpful to developers used to map - filter - reduce approach of nodejs arrays.",
   "main": "index.js",
   "scripts": {
@@ -25,7 +25,11 @@
     "object stream",
     "object streams",
     "promise to stream",
-    "promise to streams"
+    "promise to streams",
+    "streams to promise",
+    "stream to promises",
+    "array to stream",
+    "stream to array"
   ],
   "author": "Krzysztof Burlinski and Lukasz Gintowt",
   "license": "MIT",

@@ -2,7 +2,6 @@
 
 const stream = require('stream')
 const through2Concurrent = require('through2-concurrent')
-const streamToArray = require('stream-to-array')
 
 function thru(transform, flush) {
     return new stream.Transform({
@@ -25,24 +24,14 @@ function arrayToStream(data) {
     return newStream
 }
 
-function streamToSet(stream) {
-    return new Promise((resolve, reject) => {
-        const set = new Set()
-        stream
-            .on('data', data => set.add(data))
-            .on('error', reject)
-            .on('end', () => resolve(set))
-    })
-}
-
-function streamToSet2() {
+function streamToSet() {
     return reduce((acc, curr) => {
         acc.add(curr)
         return acc
     }, new Set())
 }
 
-function streamToArray2() {
+function streamToArray() {
     return reduce((acc, curr) => {
         acc.push(curr)
         return acc
@@ -98,9 +87,7 @@ module.exports = {
     thruParallel,
     arrayToStream,
     streamToSet,
-    streamToSet2,
     streamToArray,
-    streamToArray2,
     newReadable,
     map,
     filter,

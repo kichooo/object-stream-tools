@@ -117,7 +117,7 @@ tap.test('Test thruParallel', t => {
 
 tap.test('Test thru not losing this (so it can use this.push)', t =>
     dataStream()
-        .pipe(ost.thru(function(obj, cb) {
+        .pipe(ost.thru(function (obj, cb) {
             this.push(obj.cats.length)
             this.push(obj.cats.length * 2)
             cb()
@@ -130,7 +130,7 @@ tap.test('Test thru not losing this (so it can use this.push)', t =>
 
 tap.test('Test thruParallel not losing this (so it can use this.push)', t =>
     dataStream()
-        .pipe(ost.thruParallel(2, function(obj, cb) {
+        .pipe(ost.thruParallel(2, function (obj, cb) {
             this.push(obj.cats.length)
             this.push(obj.cats.length * 2)
             cb()
@@ -140,6 +140,27 @@ tap.test('Test thruParallel not losing this (so it can use this.push)', t =>
         .on('error', t.fail)
         .on('end', t.end)
 )
+
+tap.test('Test promise to stream on successful resolution', t => {
+    ost.promiseToStream(new Promise((resolve, reject) => {
+        setTimeout(() => resolve([3, 6, 3, 6, 2, 4]), 10)
+    }))
+        .on('data', objs => t.same(objs, [3, 6, 3, 6, 2, 4]))
+        .on('error', t.fail)
+        .on('end', t.end)
+})
+
+tap.test('Test promise to stream on rejection', t => {
+    ost.promiseToStream(new Promise((resolve, reject) => {
+        setTimeout(() => reject([3, 6, 3, 6, 2, 4]), 10)
+    }))
+        .on('data', data => t.fail('this one should be rejected'))
+        .on('error', err => {
+            t.pass('this promise is rejected')
+            t.end()
+        })
+
+})
 
 function dataStream() {
     return fs.createReadStream('./test/data.json')

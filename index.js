@@ -6,14 +6,16 @@ const through2Concurrent = require('through2-concurrent')
 function thru(transform, flush) {
     return new stream.Transform({
         objectMode: true,
-        transform: function(obj, enc, cb) { transform.call(this, obj, cb) },
+        transform: function (obj, enc, cb) {
+            transform.call(this, obj, cb)
+        },
         flush
     })
 }
 
 function thruParallel(maxConcurrency, transform, flush) {
-    return through2Concurrent.obj({ maxConcurrency },
-        function(obj, enc, cb) {
+    return through2Concurrent.obj({maxConcurrency},
+        function (obj, enc, cb) {
             transform.call(this, obj, cb)
         },
         flush
@@ -21,7 +23,7 @@ function thruParallel(maxConcurrency, transform, flush) {
 }
 
 function arrayToStream(data) {
-    const newStream = new stream.Readable({ objectMode: true })
+    const newStream = newReadable()
     data.forEach(item => newStream.push(item))
     newStream.push(null)
     return newStream
@@ -42,8 +44,9 @@ function streamToArray() {
 }
 
 function newReadable() {
-    const rs = new stream.Readable({ objectMode: true })
-    rs._read = () => {}
+    const rs = new stream.Readable({objectMode: true})
+    rs._read = () => {
+    }
     return rs
 }
 
@@ -54,6 +57,17 @@ function map(func) {
             cb(null, func(data))
         }
     })
+}
+
+function promiseToStream(promise) {
+    const newStream = newReadable()
+    promise
+        .then(data => {
+            newStream.push(data)
+            newStream.push(null)
+        })
+        .catch(err => newStream.emit('error', err))
+    return newStream
 }
 
 function filter(func) {
@@ -78,7 +92,7 @@ function reduce(func, acc = required()) {
     return thru((curr, cb) => {
         acc = func(acc, curr, i++)
         cb()
-    }, function() {
+    }, function () {
         this.emit('data', acc)
         this.emit('end')
     })
@@ -93,5 +107,6 @@ module.exports = {
     newReadable,
     map,
     filter,
-    reduce
+    reduce,
+    promiseToStream
 }

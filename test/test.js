@@ -116,23 +116,29 @@ tap.test('Test thruParallel', t => {
 })
 
 tap.test('Test thru not losing this (so it can use this.push)', t =>
-    ost.streamToArray(dataStream()
+    dataStream()
         .pipe(ost.thru(function(obj, cb) {
             this.push(obj.cats.length)
             this.push(obj.cats.length * 2)
             cb()
-        })))
-    .then(objs => t.same(objs, [3, 6, 3, 6, 2, 4]), t.fail)
+        }))
+        .pipe(ost.streamToArray())
+        .on('data', objs => t.same(objs, [3, 6, 3, 6, 2, 4]))
+        .on('error', t.fail)
+        .on('end', t.end)
 )
 
 tap.test('Test thruParallel not losing this (so it can use this.push)', t =>
-    ost.streamToArray(dataStream()
+    dataStream()
         .pipe(ost.thruParallel(2, function(obj, cb) {
             this.push(obj.cats.length)
             this.push(obj.cats.length * 2)
             cb()
-        })))
-    .then(objs => t.same(objs.sort(), [3, 6, 3, 6, 2, 4].sort()), t.fail)
+        }))
+        .pipe(ost.streamToArray())
+        .on('data', objs => t.same(objs.sort(), [3, 6, 3, 6, 2, 4].sort()))
+        .on('error', t.fail)
+        .on('end', t.end)
 )
 
 function dataStream() {

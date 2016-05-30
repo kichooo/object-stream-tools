@@ -14,7 +14,10 @@ function thru(transform, flush) {
 
 function thruParallel(maxConcurrency, transform, flush) {
     return through2Concurrent.obj({ maxConcurrency },
-        (obj, enc, cb) => transform(obj, cb), flush
+        function(obj, enc, cb) {
+            transform.call(this, obj, cb)
+        },
+        flush
     )
 }
 

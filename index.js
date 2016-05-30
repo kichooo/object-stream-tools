@@ -7,19 +7,19 @@ const streamToArray = require('stream-to-array')
 function thru(transform, flush) {
     return new stream.Transform({
         objectMode: true,
-        transform: (obj, enc, cb) => transform(obj, cb),
+        transform: function(obj, enc, cb) { transform.call(this, obj, cb) },
         flush
     })
 }
 
 function thruParallel(maxConcurrency, transform, flush) {
-    return through2Concurrent.obj({maxConcurrency},
+    return through2Concurrent.obj({ maxConcurrency },
         (obj, enc, cb) => transform(obj, cb), flush
     )
 }
 
 function arrayToStream(data) {
-    const newStream = new stream.Readable({objectMode: true})
+    const newStream = new stream.Readable({ objectMode: true })
     data.forEach(item => newStream.push(item))
     newStream.push(null)
     return newStream
@@ -36,9 +36,8 @@ function streamToSet(stream) {
 }
 
 function newReadable() {
-    const rs = new stream.Readable({objectMode: true})
-    rs._read = () => {
-    }
+    const rs = new stream.Readable({ objectMode: true })
+    rs._read = () => {}
     return rs
 }
 

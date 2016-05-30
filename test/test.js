@@ -28,6 +28,17 @@ tap.test('Test streamToSet', t =>
         }, t.fail)
 )
 
+tap.test('Test streamToSet2', t =>
+    dataStream()
+        .pipe(ost.map(obj => obj.szop))
+        .pipe(ost.streamToSet2())
+        .on('data', uniqueSet =>
+            t.same(Array.from(uniqueSet.values()), ['pracz', 'niepracz'])
+        )
+        .on('error', t.fail)
+        .on('end', () => t.end())
+)
+
 tap.test('Test arrayToStream', t =>
     ost.streamToArray(
         ost.arrayToStream(data)

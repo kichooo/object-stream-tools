@@ -35,6 +35,13 @@ function streamToSet(stream) {
     })
 }
 
+function streamToSet2() {
+    return reduce((acc, curr) => {
+        acc.add(curr)
+        return acc
+    }, new Set())
+}
+
 function newReadable() {
     const rs = new stream.Readable({objectMode: true})
     rs._read = () => {
@@ -81,6 +88,7 @@ module.exports = {
     arrayToStream,
     streamToArray,
     streamToSet,
+    streamToSet2,
     newReadable,
     map,
     filter,

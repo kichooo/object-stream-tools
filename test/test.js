@@ -56,11 +56,30 @@ tap.test('Test map', t =>
         .on('end', t.end)
 )
 
+tap.test('Test map uses correct iterator', t =>
+    dataStream()
+        .pipe(ost.map((obj, i) => obj.foo + i))
+        .pipe(ost.streamToArray())
+        .on('data', objs => t.same(objs, ['bar0', 'foo1', 'rand2']))
+        .on('error', t.fail)
+        .on('end', t.end)
+)
+
 tap.test('Test filter', t =>
     dataStream()
         .pipe(ost.filter(testFilter))
         .pipe(ost.streamToArray())
         .on('data', objs => t.same(objs, data.filter(testFilter)))
+        .on('error', t.fail)
+        .on('end', t.end)
+)
+
+tap.test('Test filter uses correct iterator', t =>
+    dataStream()
+        .pipe(ost.filter((e, i) => e.value + i > 6))
+        .pipe(ost.streamToArray())
+        .on('data', objs =>
+            t.same(objs, data.filter((e, i) => e.value + i > 6)))
         .on('error', t.fail)
         .on('end', t.end)
 )
@@ -180,6 +199,23 @@ tap.test('Test stream to promise on broken streams', t => {
 
     readable.emit('error', 'Jabberwacky')
 })
+
+tap.test('Test some if any value matches', t =>
+    ost.streamToPromise(
+        dataStream().pipe(ost.some(el => el.value === 42))
+    )
+        .then(boolArr => t.same(...boolArr, true))
+        .catch(t.fail)
+)
+
+tap.test('Test some when no value matches', t =>
+    ost.streamToPromise(
+        dataStream().pipe(ost.some(el => el.value === 'XXL'))
+    )
+        .then(boolArr => t.same(...boolArr, false))
+        .catch(t.fail)
+)
+
 
 function dataStream() {
     return fs.createReadStream('./test/data.json')

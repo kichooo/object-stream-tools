@@ -23,18 +23,35 @@ function thruParallel(maxConcurrency, transform, flush) {
 }
 
 function map(func) {
+    let i = 0
     return thru((data, cb) => {
-        cb(null, func(data))
+        cb(null, func(data, i++))
     })
 }
 
 function filter(func) {
+    let i = 0
     return thru((data, cb) => {
-        if (func(data)) {
+        if (func(data, i++)) {
             cb(null, data)
         } else {
             cb()
         }
+    })
+}
+
+function some(func) {
+    let i = 0
+    return thru(function(curr, cb) {
+        if (func(curr, i++)) {
+            cb(null, true)
+            this.emit('end')
+        } else {
+            cb()
+        }
+    }, function () {
+        this.emit('data', false)
+        this.emit('end')
     })
 }
 
@@ -112,6 +129,7 @@ module.exports = {
     map,
     filter,
     reduce,
+    some,
     promiseToStream,
     streamToPromise
 }

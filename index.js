@@ -22,6 +22,44 @@ function thruParallel(maxConcurrency, transform, flush) {
     )
 }
 
+function map(func) {
+    return thru((data, cb) => {
+        cb(null, func(data))
+    })
+}
+
+function filter(func) {
+    return thru((data, cb) => {
+        if (func(data)) {
+            cb(null, data)
+        } else {
+            cb()
+        }
+    })
+}
+
+function required() {
+    throw new Error('Initial value required')
+}
+
+function reduce(func, acc = required()) {
+    let i = 0
+    return thru((curr, cb) => {
+        acc = func(acc, curr, i++)
+        cb()
+    }, function () {
+        this.emit('data', acc)
+        this.emit('end')
+    })
+}
+
+function newReadable() {
+    const rs = new stream.Readable({objectMode: true})
+    rs._read = () => {
+    }
+    return rs
+}
+
 function arrayToStream(data) {
     const newStream = newReadable()
     data.forEach(item => newStream.push(item))
@@ -43,22 +81,6 @@ function streamToArray() {
     }, [])
 }
 
-function newReadable() {
-    const rs = new stream.Readable({objectMode: true})
-    rs._read = () => {
-    }
-    return rs
-}
-
-function map(func) {
-    return new stream.Transform({
-        objectMode: true,
-        transform: (data, enc, cb) => {
-            cb(null, func(data))
-        }
-    })
-}
-
 function promiseToStream(promise) {
     const newStream = newReadable()
     promise
@@ -77,34 +99,6 @@ function streamToPromise(stream) {
             .on('data', data => arr.push(data))
             .on('error', reject)
             .on('end', () => resolve(arr))
-    })
-}
-
-function filter(func) {
-    return new stream.Transform({
-        objectMode: true,
-        transform: (data, enc, cb) => {
-            if (func(data)) {
-                cb(null, data)
-            } else {
-                cb()
-            }
-        }
-    })
-}
-
-function required() {
-    throw new Error('Initial value required')
-}
-
-function reduce(func, acc = required()) {
-    let i = 0
-    return thru((curr, cb) => {
-        acc = func(acc, curr, i++)
-        cb()
-    }, function () {
-        this.emit('data', acc)
-        this.emit('end')
     })
 }
 

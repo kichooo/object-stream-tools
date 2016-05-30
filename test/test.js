@@ -4,6 +4,7 @@ const fs = require('fs')
 const tap = require('tap')
 const ost = require('../index.js')
 const jsonStream = require('JSONStream')
+const stream = require('stream')
 
 const data = require('./data.json')
 
@@ -166,6 +167,19 @@ tap.test('Test stream to promise', t =>
         .then(objs => t.same(objs, data))
         .catch(t.fail)
 )
+
+tap.test('Test stream to promise on broken streams', t => {
+    const readable = ost.newReadable()
+
+    ost.streamToPromise(readable)
+        .then(data => t.fail('should resolve as failed promise'))
+        .catch(err => {
+            t.same(err, 'Jabberwacky')
+            t.end()
+        })
+
+    readable.emit('error', 'Jabberwacky')
+})
 
 function dataStream() {
     return fs.createReadStream('./test/data.json')

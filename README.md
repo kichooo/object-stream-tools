@@ -72,14 +72,15 @@ Example: sum / average value of huge stream
 
 ```js
 const jsonStream = require('JSONStream')
-ost.streamToArray((fs.createReadStream('./test/data.json')
+fs.createReadStream('./test/data.json')
     .pipe(jsonStream.parse('*'))
+    // pick required property you want to reduce over
     .pipe(ost.map(obj => obj.requiredProperty))
     .pipe(ost.reduce((acc, curr, i) => {
         return acc + curr + i
-    }, 0)))
-    .then(reducedValue) => {
-        // here you will get reduced value wrapped in array
+    }, 0))
+    .on('data', reducedValue => {
+        // here you will get reduced value
     })
 ```
 

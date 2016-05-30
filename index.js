@@ -78,7 +78,11 @@ function filter(func) {
     })
 }
 
-function reduce(func, acc) {
+function required() {
+    throw new Error('Initial value required')
+}
+
+function reduce(func, acc = required()) {
     let i = 0
     return thru((curr, cb) => {
         acc = func(acc, curr, i++)

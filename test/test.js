@@ -4,6 +4,7 @@ const fs = require('fs')
 const tap = require('tap')
 const ost = require('../index.js')
 const jsonStream = require('JSONStream')
+const _ = require('lodash')
 
 const data = require('./data.json')
 
@@ -62,14 +63,13 @@ tap.test('Test map', t =>
         .then(objs => t.same(objs, ["bar", "foo", "rand"]), t.fail)
 )
 
-
 tap.test('Test filter', t =>
     ost.streamToArray(dataStream()
         .pipe(ost.filter(testFilter)))
         .then(objs => t.same(objs, data.filter(testFilter)), t.fail)
 )
 
-tap.test('Test filter on numerical values', t=>
+tap.test('Test filter on numerical values', t =>
     ost.streamToArray(dataStream()
         .pipe(ost.filter(e => e.value > 6)))
         .then(objs => t.same(objs, data.filter(e => e.value > 6)))

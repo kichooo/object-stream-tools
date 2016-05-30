@@ -50,6 +50,13 @@ tap.test('Test filter', t =>
         .then(objs => t.same(objs, data.filter(testFilter)), t.fail)
 )
 
+tap.test('Test filter on numerical values', t=>
+    ost.streamToArray(dataStream()
+        .pipe(ost.filter(e => e.value > 6)))
+        .then(objs => t.same(objs, data.filter(e => e.value > 6)))
+        .catch(t.fail)
+)
+
 tap.test('Test reduce', t =>
     dataStream()
         .pipe(ost.map(obj => obj.value))

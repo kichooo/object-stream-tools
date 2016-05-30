@@ -1,15 +1,20 @@
 # object-stream-tools
 
+This package brings goodies of functional programming (map, filter, reduce) to node streams.
+
+
 # Installation
 
 ```js
 npm install --save object-stream-tools
 ```
 
+
 # Usage
-
-
+ 
 #### arrayToStream
+
+Converts existing array to stream of objects. Useful if you want to inject/merge those object to the existing stream. 
 
 ```js
 const ost = require('object-stream-tools')
@@ -42,6 +47,20 @@ ost.streamToSet(fs.createReadStream('./test/data.json')
     })
 ```
 
+
+#### filter
+
+If you just want to remove some objects from stream, you probably want to use filter function.
+
+```js
+ost.streamToArray(dataStream()
+    .pipe(ost.filter(e => e.property > 6)))
+    .then(filteredObjects => 
+        // here you will get filtered objects
+    )
+```
+
+
 #### map-reduce
 
 Map is useful when you want to modify existing objects in the stream.
@@ -64,7 +83,7 @@ ost.streamToArray((fs.createReadStream('./test/data.json')
     })
 ```
 
-or 
+Here is example with buffered/string input output:
 
 ```js
 const jsonStream = require('JSONStream')
@@ -80,5 +99,6 @@ fs.createReadStream('./test/data.json')
     .pipe(jsonStream.stringify())
     .pipe(process.stdout)
 ```
+
 
 ## Please look at the tests for more use cases.

@@ -1,6 +1,6 @@
 {
   "name": "object-stream-tools",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Useful tools for manipulating object streams. Will be especially helpful to developers used to map - filter - reduce approach of nodejs arrays.",
   "main": "index.js",
   "scripts": {
@@ -21,9 +21,11 @@
     "reduce",
     "array",
     "set",
-    "tools"
+    "tools",
+    "object stream",
+    "object streams"
   ],
-  "author": "Krzysztof Burlinski",
+  "author": "Krzysztof Burlinski and Lukasz Gintowt",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/kichooo/object-stream-tools/issues"

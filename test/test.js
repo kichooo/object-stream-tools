@@ -18,6 +18,14 @@ tap.test('Test streamToArray', t =>
         .then(objs => t.same(objs, data), t.fail)
 )
 
+tap.test('Test streamToArray2', t =>
+    dataStream()
+        .pipe(ost.streamToArray2())
+        .on('data', objs => t.same(objs, data))
+        .on('error', t.fail)
+        .on('end', () => t.end())
+)
+
 tap.test('Test streamToSet', t =>
     ost.streamToSet(dataStream()
         .pipe(ost.map(obj => obj.szop)))

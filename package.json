@@ -23,7 +23,9 @@
     "set",
     "tools",
     "object stream",
-    "object streams"
+    "object streams",
+    "promise to stream",
+    "promise to streams"
   ],
   "author": "Krzysztof Burlinski and Lukasz Gintowt",
   "license": "MIT",

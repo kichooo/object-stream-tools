@@ -101,5 +101,15 @@ fs.createReadStream('./test/data.json')
     .pipe(process.stdout)
 ```
 
+#### promise to stream
+
+It is a useful helper if you dealing with a lot of smaller data that are wrapped in Promise API, ex:
+
+```js
+ ost.promiseToStream(myDbQueryThatReturnPromise())
+    .on('data', data => {
+        // here you will get a real stream that you can pipe
+    })
+```
 
 ## Please look at the tests for more use cases.

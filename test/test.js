@@ -159,7 +159,6 @@ tap.test('Test promise to stream on rejection', t => {
             t.pass('this promise is rejected')
             t.end()
         })
-
 })
 
 function dataStream() {

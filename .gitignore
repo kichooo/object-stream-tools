@@ -39,3 +39,4 @@ node_modules
 # Files in data directory
 /data/categories/*.txt
 /data/categories/*.csv
+Trash

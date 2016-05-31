@@ -15,7 +15,7 @@ tap.test('Test thru', t =>
         .on('data', objs => t.same(objs, [3, 3, 2]))
         .on('error', t.fail)
         .on('end', t.end)
-);
+)
 
 tap.test('Test streamToArray', t =>
     dataStream()
@@ -112,7 +112,7 @@ tap.test('Test reduce acc is required', t => {
         t.fail('Error should thrown')
     } catch (e) {
         t.same(e.message, "Initial value required")
-        t.end();
+        t.end()
     }
 })
 
@@ -169,7 +169,7 @@ tap.test('Test thruParallel not losing this (so it can use this.push)', t =>
         .on('data', objs => t.same(objs.sort(), [3, 6, 3, 6, 2, 4].sort()))
         .on('error', t.fail)
         .on('end', t.end)
-);
+)
 
 tap.test('Test promise to stream on successful resolution', t =>
     ost.promiseToStream(new Promise((resolve, reject) => {
@@ -178,7 +178,7 @@ tap.test('Test promise to stream on successful resolution', t =>
         .on('data', objs => t.same(objs, [3, 6, 3, 6, 2, 4]))
         .on('error', t.fail)
         .on('end', t.end)
-);
+)
 
 tap.test('Test promise to stream on rejection', t =>
     ost.promiseToStream(new Promise((resolve, reject) => {
@@ -189,13 +189,13 @@ tap.test('Test promise to stream on rejection', t =>
             t.pass('this promise is rejected');
             t.end()
         })
-);
+)
 
 tap.test('Test stream to promise', t =>
     ost.streamToPromise(dataStream())
         .then(objs => t.same(objs, data))
         .catch(t.fail)
-);
+)
 
 tap.test('Test stream to promise on broken streams', t => {
     const readable = ost.newReadable();
@@ -208,7 +208,7 @@ tap.test('Test stream to promise on broken streams', t => {
         });
 
     readable.emit('error', 'Jabberwacky')
-});
+})
 
 tap.test('Test some if any value matches', t =>
     ost.streamToPromise(
@@ -216,7 +216,7 @@ tap.test('Test some if any value matches', t =>
     )
         .then(boolArr => t.same(...boolArr, true))
         .catch(t.fail)
-);
+)
 
 tap.test('Test some when no value matches', t =>
     ost.streamToPromise(
@@ -224,7 +224,7 @@ tap.test('Test some when no value matches', t =>
     )
         .then(boolArr => t.same(...boolArr, false))
         .catch(t.fail)
-);
+)
 
 function dataStream() {
     return fs.createReadStream('./test/data.json')

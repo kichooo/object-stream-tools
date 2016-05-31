@@ -1,7 +1,7 @@
-'use strict'
+'use strict';
 
-const stream = require('stream')
-const through2Concurrent = require('through2-concurrent')
+const stream = require('stream');
+const through2Concurrent = require('through2-concurrent');
 
 function thru(transform, flush) {
     return new stream.Transform({
@@ -10,7 +10,7 @@ function thru(transform, flush) {
             transform.call(this, obj, cb)
         },
         flush
-    })
+    });
 }
 
 function thruParallel(maxConcurrency, transform, flush) {
@@ -23,14 +23,14 @@ function thruParallel(maxConcurrency, transform, flush) {
 }
 
 function map(func) {
-    let i = 0
+    let i = 0;
     return thru((data, cb) => {
         cb(null, func(data, i++))
     })
 }
 
 function filter(func) {
-    let i = 0
+    let i = 0;
     return thru((data, cb) => {
         if (func(data, i++)) {
             cb(null, data)
@@ -41,81 +41,81 @@ function filter(func) {
 }
 
 function some(func) {
-    let i = 0
-    return thru(function(curr, cb) {
+    let i = 0;
+    return thru(function (curr, cb) {
         if (func(curr, i++)) {
-            cb(null, true)
+            cb(null, true);
             this.emit('end')
         } else {
             cb()
         }
     }, function () {
-        this.emit('data', false)
-        this.emit('end')
+        this.emit('data', false);
+        this.emit('end');
     })
 }
 
 function required() {
-    throw new Error('Initial value required')
+    throw new Error('Initial value required');
 }
 
 function reduce(func, acc = required()) {
-    let i = 0
+    let i = 0;
     return thru((curr, cb) => {
-        acc = func(acc, curr, i++)
+        acc = func(acc, curr, i++);
         cb()
     }, function () {
-        this.emit('data', acc)
-        this.emit('end')
+        this.emit('data', acc);
+        this.emit('end');
     })
 }
 
 function newReadable() {
-    const rs = new stream.Readable({objectMode: true})
+    const rs = new stream.Readable({objectMode: true});
     rs._read = () => {
-    }
-    return rs
+    };
+    return rs;
 }
 
 function arrayToStream(data) {
-    const newStream = newReadable()
-    data.forEach(item => newStream.push(item))
-    newStream.push(null)
-    return newStream
+    const newStream = newReadable();
+    data.forEach(item => newStream.push(item));
+    newStream.push(null);
+    return newStream;
 }
 
 function streamToSet() {
     return reduce((acc, curr) => {
-        acc.add(curr)
-        return acc
+        acc.add(curr);
+        return acc;
     }, new Set())
 }
 
 function streamToArray() {
     return reduce((acc, curr) => {
-        acc.push(curr)
-        return acc
+        acc.push(curr);
+        return acc;
     }, [])
 }
 
 function promiseToStream(promise) {
-    const newStream = newReadable()
+    const newStream = newReadable();
     promise
         .then(data => {
-            newStream.push(data)
-            newStream.push(null)
+            newStream.push(data);
+            newStream.push(null);
         })
-        .catch(err => newStream.emit('error', err))
+        .catch(err => newStream.emit('error', err));
     return newStream
 }
 
 function streamToPromise(stream) {
     return new Promise((resolve, reject) => {
-        const arr = []
+        const arr = [];
         stream
             .on('data', data => arr.push(data))
             .on('error', reject)
-            .on('end', () => resolve(arr))
+            .on('end', () => resolve(arr));
     })
 }
 
@@ -132,4 +132,4 @@ module.exports = {
     some,
     promiseToStream,
     streamToPromise
-}
+};

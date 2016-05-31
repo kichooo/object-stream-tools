@@ -4,7 +4,8 @@
   "description": "Useful tools for manipulating object streams. Will be especially helpful to developers used to map - filter - reduce approach of nodejs arrays.",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/tap/bin/run.js test/test.js"
+    "test": "tap test/test.js",
+    "coverage": "npm test -- --coverage-report=html"
   },
   "repository": {
     "type": "git",

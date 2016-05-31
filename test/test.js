@@ -1,12 +1,12 @@
-'use strict';
+'use strict'
 
-const fs = require('fs');
-const tap = require('tap');
-const ost = require('../index');
-const jsonStream = require('JSONStream');
-const stream = require('stream');
+const fs = require('fs')
+const tap = require('tap')
+const ost = require('../index')
+const jsonStream = require('JSONStream')
+const stream = require('stream')
 
-const data = require('./data.json');
+const data = require('./data.json')
 
 tap.test('Test thru', t =>
     dataStream()
@@ -23,7 +23,7 @@ tap.test('Test streamToArray', t =>
         .on('data', objs => t.same(objs, data))
         .on('error', t.fail)
         .on('end', t.end)
-);
+)
 
 tap.test('Test streamToSet returns unique values', t =>
     dataStream()
@@ -34,7 +34,7 @@ tap.test('Test streamToSet returns unique values', t =>
         )
         .on('error', t.fail)
         .on('end', t.end)
-);
+)
 
 tap.test('Test arrayToStream', t =>
     ost.arrayToStream(data)
@@ -45,7 +45,7 @@ tap.test('Test arrayToStream', t =>
         })
         .on('error', t.fail)
         .on('end', t.end)
-);
+)
 
 tap.test('Test map', t =>
     dataStream()
@@ -54,7 +54,7 @@ tap.test('Test map', t =>
         .on('data', objs => t.same(objs, ['bar', 'foo', 'rand']))
         .on('error', t.fail)
         .on('end', t.end)
-);
+)
 
 tap.test('Test map uses correct iterator', t =>
     dataStream()
@@ -63,7 +63,7 @@ tap.test('Test map uses correct iterator', t =>
         .on('data', objs => t.same(objs, ['bar0', 'foo1', 'rand2']))
         .on('error', t.fail)
         .on('end', t.end)
-);
+)
 
 tap.test('Test filter', t =>
     dataStream()
@@ -72,7 +72,7 @@ tap.test('Test filter', t =>
         .on('data', objs => t.same(objs, data.filter(testFilter)))
         .on('error', t.fail)
         .on('end', t.end)
-);
+)
 
 tap.test('Test filter uses correct iterator', t =>
     dataStream()
@@ -82,7 +82,7 @@ tap.test('Test filter uses correct iterator', t =>
             t.same(objs, data.filter((e, i) => e.value + i > 6)))
         .on('error', t.fail)
         .on('end', t.end)
-);
+)
 
 tap.test('Test filter on numerical values', t =>
     dataStream()
@@ -91,7 +91,7 @@ tap.test('Test filter on numerical values', t =>
         .on('data', objs => t.same(objs, data.filter(e => e.value > 6)))
         .on('error', t.fail)
         .on('end', t.end)
-);
+)
 
 tap.test('Test reduce', t =>
     dataStream()
@@ -104,30 +104,30 @@ tap.test('Test reduce', t =>
         .on('error', err => t.fail(err.stack))
         .pipe(jsonStream.stringify())
         .on('end', t.end)
-);
+)
 
 tap.test('Test reduce acc is required', t => {
     try {
         ost.reduce(null);
-        t.fail('Error should thrown');
+        t.fail('Error should thrown')
     } catch (e) {
-        t.same(e.message, "Initial value required");
+        t.same(e.message, "Initial value required")
         t.end();
     }
-});
+})
 
 // This test is a bit more complicated. We will only let the 1st object through when second has already been called.
 tap.test('Test thruParallel', t => {
-    let secondObjDone = false;
+    let secondObjDone = false
     dataStream()
         .pipe(ost.thruParallel(2, (obj, cb) => {
             if (obj.foo === 'bar') {
                 const interval = setInterval(() => {
                     if (secondObjDone) {
-                        cb(null, obj.cats.length);
+                        cb(null, obj.cats.length)
                         clearInterval(interval)
                     }
-                }, 100);
+                }, 100)
                 return
             }
             if (obj.foo === 'foo') {
@@ -137,32 +137,32 @@ tap.test('Test thruParallel', t => {
         }))
         .pipe(ost.streamToArray())
         .on('data', objs => {
-            const actualData = objs.sort();
-            const expectedData = data.map(obj => obj.cats.length).sort();
+            const actualData = objs.sort()
+            const expectedData = data.map(obj => obj.cats.length).sort()
             t.same(actualData, expectedData)
         })
         .on('error', t.fail)
         .on('end', t.end)
-});
+})
 
 tap.test('Test thru not losing this (so it can use this.push)', t =>
     dataStream()
         .pipe(ost.thru(function (obj, cb) {
-            this.push(obj.cats.length);
-            this.push(obj.cats.length * 2);
+            this.push(obj.cats.length)
+            this.push(obj.cats.length * 2)
             cb()
         }))
         .pipe(ost.streamToArray())
         .on('data', objs => t.same(objs, [3, 6, 3, 6, 2, 4]))
         .on('error', t.fail)
         .on('end', t.end)
-);
+)
 
 tap.test('Test thruParallel not losing this (so it can use this.push)', t =>
     dataStream()
         .pipe(ost.thruParallel(2, function (obj, cb) {
-            this.push(obj.cats.length);
-            this.push(obj.cats.length * 2);
+            this.push(obj.cats.length)
+            this.push(obj.cats.length * 2)
             cb()
         }))
         .pipe(ost.streamToArray())
@@ -232,5 +232,5 @@ function dataStream() {
 }
 
 function testFilter(obj) {
-    return obj.szop === 'pracz';
+    return obj.szop === 'pracz'
 }

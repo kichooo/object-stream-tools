@@ -106,15 +106,18 @@ tap.test('Test reduce', t =>
         .on('end', t.end)
 )
 
-tap.test('Test reduce acc is required', t => {
-    try {
-        ost.reduce(null)
-        t.fail('Error should thrown')
-    } catch (e) {
-        t.same(e.message, "Initial value required")
-        t.end()
-    }
-})
+tap.test('Test reduce with no initial value', t =>
+    dataStream()
+        .pipe(ost.map(obj => obj.value))
+        .pipe(ost.reduce((acc, curr, i) => {
+            return acc + curr + i
+        }))
+        .on('data', reducedValue =>
+            t.same(reducedValue, 42 + 1 + 7 + 1))
+        .on('error', err => t.fail(err.stack))
+        .pipe(jsonStream.stringify())
+        .on('end', t.end)
+)
 
 // This test is a bit more complicated. We will only let the 1st object through when second has already been called.
 tap.test('Test thruParallel', t => {

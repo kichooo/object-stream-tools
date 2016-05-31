@@ -55,13 +55,13 @@ function some(func) {
     })
 }
 
-function required() {
-    throw new Error('Initial value required')
-}
-
-function reduce(func, acc = required()) {
+function reduce(func, acc) {
     let i = 0
     return thru((curr, cb) => {
+        if (acc === undefined) {
+            acc = curr
+            return cb()
+        }
         acc = func(acc, curr, i++)
         cb()
     }, function () {

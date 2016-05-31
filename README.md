@@ -103,6 +103,10 @@ fs.createReadStream('./test/data.json')
     .pipe(process.stdout)
 ```
 
+Please note that if you do not pass initial value reduce function will start in (prev, curr, i) mode.
+[Objects/Array/Reduce](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce)
+
+
 #### promise to stream
 
 It is a useful helper if you dealing with a lot of smaller data that are wrapped in Promise API, ex:
@@ -118,7 +122,6 @@ ost.promiseToStream(myDbQueryThatReturnPromise())
 #### stream to promise
 
 Very handy when you want to consume streams but rest of your application logic uses promises. 
-
 
 ```js
 ost.streamToPromise(fs.createReadStream('../test/data.json')

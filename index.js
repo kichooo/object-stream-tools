@@ -57,12 +57,11 @@ function some(func) {
 
 function find(func) {
     let i = 0
-    let found = false
     return thru(function(curr, cb) {
-        if (!found && func(curr, i++)) {
-            found = true
-            cb(null, curr)
+        if (func(curr, i++)) {
+            this.emit('data', curr)
             this.emit('end')
+            this.end()
         } else {
             cb()
         }

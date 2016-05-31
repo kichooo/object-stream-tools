@@ -60,7 +60,7 @@ function required() {
 }
 
 function reduce(func, acc = required()) {
-    let i = 0;
+    let i = 0
     return thru((curr, cb) => {
         acc = func(acc, curr, i++)
         cb()

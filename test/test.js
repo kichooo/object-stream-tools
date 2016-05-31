@@ -108,7 +108,7 @@ tap.test('Test reduce', t =>
 
 tap.test('Test reduce acc is required', t => {
     try {
-        ost.reduce(null);
+        ost.reduce(null)
         t.fail('Error should thrown')
     } catch (e) {
         t.same(e.message, "Initial value required")
@@ -186,7 +186,7 @@ tap.test('Test promise to stream on rejection', t =>
     }))
         .on('data', data => t.fail('this one should be rejected'))
         .on('error', err => {
-            t.pass('this promise is rejected');
+            t.pass('this promise is rejected')
             t.end()
         })
 )
@@ -198,14 +198,14 @@ tap.test('Test stream to promise', t =>
 )
 
 tap.test('Test stream to promise on broken streams', t => {
-    const readable = ost.newReadable();
+    const readable = ost.newReadable()
 
     ost.streamToPromise(readable)
         .then(data => t.fail('should resolve as failed promise'))
         .catch(err => {
-            t.same(err, 'Jabberwacky');
+            t.same(err, 'Jabberwacky')
             t.end()
-        });
+        })
 
     readable.emit('error', 'Jabberwacky')
 })

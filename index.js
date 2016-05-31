@@ -57,8 +57,10 @@ function some(func) {
 
 function find(func) {
     let i = 0
+    let found
     return thru(function(curr, cb) {
-        if (func(curr, i++)) {
+        if (found === undefined && func(curr, i++)) {
+            found = curr
             cb(null, curr)
             this.emit('end')
         } else {

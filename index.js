@@ -6,7 +6,7 @@ const through2Concurrent = require('through2-concurrent')
 function thru(transform, flush) {
     return new stream.Transform({
         objectMode: true,
-        transform: function (obj, enc, cb) {
+        transform: function(obj, enc, cb) {
             transform.call(this, obj, cb)
         },
         flush
@@ -14,8 +14,8 @@ function thru(transform, flush) {
 }
 
 function thruParallel(maxConcurrency, transform, flush) {
-    return through2Concurrent.obj({maxConcurrency},
-        function (obj, enc, cb) {
+    return through2Concurrent.obj({ maxConcurrency },
+        function(obj, enc, cb) {
             transform.call(this, obj, cb)
         },
         flush
@@ -42,14 +42,14 @@ function filter(func) {
 
 function some(func) {
     let i = 0
-    return thru(function (curr, cb) {
+    return thru(function(curr, cb) {
         if (func(curr, i++)) {
             cb(null, true)
             this.emit('end')
         } else {
             cb()
         }
-    }, function () {
+    }, function() {
         this.emit('data', false)
         this.emit('end')
     })
@@ -57,14 +57,14 @@ function some(func) {
 
 function find(func) {
     let i = 0
-    return thru(function (curr, cb) {
+    return thru(function(curr, cb) {
         if (func(curr, i++)) {
             cb(null, curr)
             this.emit('end')
         } else {
             cb()
         }
-    }, function () {
+    }, function() {
         this.emit('data', undefined)
         this.emit('end')
     })
@@ -72,23 +72,29 @@ function find(func) {
 
 function reduce(func, acc) {
     let i = 0
-    return thru((curr, cb) => {
+    const thruReduce = thru((curr, cb) => {
         if (acc === undefined) {
             acc = curr
             return cb()
         }
         acc = func(acc, curr, i++)
         cb()
-    }, function () {
+    }, function() {
         this.emit('data', acc)
         this.emit('end')
     })
+    thruReduce.promise = () => new Promise((resolve, reject) => {
+        thruReduce
+            .on('data', resolve)
+            .on('error', reject)
+    })
+
+    return thruReduce
 }
 
 function newReadable() {
-    const rs = new stream.Readable({objectMode: true})
-    rs._read = () => {
-    }
+    const rs = new stream.Readable({ objectMode: true })
+    rs._read = () => {}
     return rs
 }
 

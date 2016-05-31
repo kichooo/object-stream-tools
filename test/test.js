@@ -17,7 +17,7 @@ tap.test('Test thru', t =>
     .on('end', t.end)
 )
 
-tap.test('Test streamToArray', t =>
+tap.test('Test ost.streamToArray()', t =>
     dataStream()
     .pipe(ost.streamToArray())
     .on('data', objs => t.same(objs, data))
@@ -25,7 +25,14 @@ tap.test('Test streamToArray', t =>
     .on('end', t.end)
 )
 
-tap.test('Test streamToSet returns unique values', t =>
+tap.test('Test ost.streamToArray() using promise', t =>
+    dataStream()
+    .pipe(ost.streamToArray())
+    .promise()
+    .then(objs => t.same(objs, data), t.fail)
+)
+
+tap.test('Test ost.streamToSet() returns unique values', t =>
     dataStream()
     .pipe(ost.map(obj => obj.szop))
     .pipe(ost.streamToSet())
@@ -34,6 +41,14 @@ tap.test('Test streamToSet returns unique values', t =>
     )
     .on('error', t.fail)
     .on('end', t.end)
+)
+
+tap.test('Test ost.streamToSet() using promise', t =>
+    dataStream()
+    .pipe(ost.map(obj => obj.szop))
+    .pipe(ost.streamToSet())
+    .promise()
+    .then(uniqueSet => t.same(Array.from(uniqueSet.values()), ['pracz', 'niepracz']), t.fail)
 )
 
 tap.test('Test arrayToStream', t =>

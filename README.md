@@ -95,7 +95,7 @@ fs.createReadStream('./test/data.json')
     .pipe(ost.map(obj => obj.requiredProperty))
     .pipe(ost.reduce((acc, curr, i) => {
         return acc + curr + i
-    }, 0)))
+    }, 0))
     .on('data', reducedValue =>
         // here you will get reduced value 
     })
@@ -124,12 +124,13 @@ ost.promiseToStream(myDbQueryThatReturnPromise())
 Very handy when you want to consume streams but rest of your application logic uses promises. 
 
 ```js
-ost.streamToPromise(fs.createReadStream('../test/data.json')
-    .pipe(jsonStream.parse('*'))
-    .pipe(ost.filter(e => e.value > 6)))
-    .then(data => {
-        // here you will get filtered objects
-    })
+ost.streamToPromise(
+    fs.createReadStream('../test/data.json')
+        .pipe(jsonStream.parse('*'))
+        .pipe(ost.filter(e => e.value > 6))
+).then(data => {
+    // here you will get filtered objects
+})
 ```
 
 
@@ -139,13 +140,14 @@ Find is super handy if we want to quickly check if vale/objects exists in the st
 Think about it as a grep on the steroids.
 
 ```js
-ost.streamToPromise(fs.createReadStream('../test/data.json')
-    .pipe(jsonStream.parse('*'))
-    .pipe(ost.find(e => e.value > 6)))
-    .then(foundObj => {
-        // here you will get found first object that matches condition
-        // or undefined when there were none that matches
-    })
+ost.streamToPromise(
+    fs.createReadStream('../test/data.json')
+        .pipe(jsonStream.parse('*'))
+        .pipe(ost.find(e => e.value > 6))
+).then(foundObj => {
+    // here you will get found first object that matches condition
+    // or undefined when there were none that matches
+})
 ```
 
 

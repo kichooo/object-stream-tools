@@ -86,9 +86,9 @@ tap.test('Test filter uses correct iterator', t =>
 
 tap.test('Test filter on numerical values', t =>
     dataStream()
-        .pipe(ost.filter(e => e.value > 6))
+        .pipe(ost.filter(numericMatch))
         .pipe(ost.streamToArray())
-        .on('data', objs => t.same(objs, data.filter(e => e.value > 6)))
+        .on('data', objs => t.same(objs, data.filter(numericMatch)))
         .on('error', t.fail)
         .on('end', t.end)
 )
@@ -215,7 +215,7 @@ tap.test('Test stream to promise on broken streams', t => {
 
 tap.test('Test some if any value matches', t =>
     ost.streamToPromise(
-        dataStream().pipe(ost.some(el => el.value === 42))
+        dataStream().pipe(ost.some(numericMatch))
     )
         .then(boolArr => t.same(...boolArr, true))
         .catch(t.fail)
@@ -223,7 +223,7 @@ tap.test('Test some if any value matches', t =>
 
 tap.test('Test some when no value matches', t =>
     ost.streamToPromise(
-        dataStream().pipe(ost.some(el => el.value === 'XXL'))
+        dataStream().pipe(ost.some(noNumericMatch))
     )
         .then(boolArr => t.same(...boolArr, false))
         .catch(t.fail)
@@ -231,17 +231,17 @@ tap.test('Test some when no value matches', t =>
 
 tap.test('Test find if value exits in the stream', t =>
     ost.streamToPromise(
-        dataStream().pipe(ost.find(el => el.value === 42))
+        dataStream().pipe(ost.find(numericMatch))
     )
-        .then(objs => t.same(...objs, data.find(el => el.value === 42)))
+        .then(objs => t.same(...objs, data.find(numericMatch)))
         .catch(t.fail)
 )
 
 tap.test('Test find if value does not exist in the stream', t =>
     ost.streamToPromise(
-        dataStream().pipe(ost.find(el => el.value === 'XXL'))
+        dataStream().pipe(ost.find(noNumericMatch))
     )
-        .then(objs => t.same(...objs, data.find(el => el.value === 'XXL')))
+        .then(objs => t.same(...objs, data.find(noNumericMatch)))
         .catch(t.fail)
 )
 
@@ -252,4 +252,12 @@ function dataStream() {
 
 function testFilter(obj) {
     return obj.szop === 'pracz'
+}
+
+function numericMatch(obj) {
+    return obj.value === 42
+}
+
+function noNumericMatch(obj) {
+    return obj.value === 'XXL'
 }

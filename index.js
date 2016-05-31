@@ -42,7 +42,7 @@ function filter(func) {
 
 function some(func) {
     let i = 0
-    return thru(function(curr, cb) {
+    return thru(function (curr, cb) {
         if (func(curr, i++)) {
             cb(null, true)
             this.emit('end')

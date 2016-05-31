@@ -40,3 +40,4 @@ node_modules
 /data/categories/*.txt
 /data/categories/*.csv
 Trash
+.nyc_output/

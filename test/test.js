@@ -2,7 +2,7 @@
 
 const fs = require('fs')
 const tap = require('tap')
-const ost = require('../index.js')
+const ost = require('../index')
 const jsonStream = require('JSONStream')
 const stream = require('stream')
 
@@ -105,6 +105,16 @@ tap.test('Test reduce', t =>
         .pipe(jsonStream.stringify())
         .on('end', t.end)
 )
+
+tap.test('Test reduce acc is required', t => {
+    try {
+        ost.reduce(null)
+        t.fail('Error should thrown')
+    } catch (e) {
+        t.same(e.message, "Initial value required")
+        t.end()
+    }
+})
 
 // This test is a bit more complicated. We will only let the 1st object through when second has already been called.
 tap.test('Test thruParallel', t => {
@@ -215,7 +225,6 @@ tap.test('Test some when no value matches', t =>
         .then(boolArr => t.same(...boolArr, false))
         .catch(t.fail)
 )
-
 
 function dataStream() {
     return fs.createReadStream('./test/data.json')

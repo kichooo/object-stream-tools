@@ -247,7 +247,7 @@ tap.test('Test some when no value matches', t =>
 
 tap.test('Test some returns 1 element', t =>
     ost.streamToPromise(
-        dataStream().pipe(ost.find(testFilter))
+        dataStream().pipe(ost.some(testFilter))
     )
     .then(objs => t.same(objs.length, 1))
     .catch(t.fail)

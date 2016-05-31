@@ -93,8 +93,7 @@ tap.test('Test filter uses correct iterator', t =>
     dataStream()
     .pipe(ost.filter((e, i) => e.value + i > 6))
     .pipe(ost.streamToArray())
-    .on('data', objs =>
-        t.same(objs, data.filter((e, i) => e.value + i > 6)))
+    .on('data', objs => t.same(objs, data.filter((e, i) => e.value + i > 6)))
     .on('error', t.fail)
     .on('end', t.end)
 )
@@ -210,70 +209,42 @@ tap.test('Test promise to stream on rejection', t =>
     })
 )
 
-tap.test('Test stream to promise', t =>
-    ost.streamToPromise(dataStream())
-    .then(objs => t.same(objs, data))
-    .catch(t.fail)
-)
-
-tap.test('Test stream to promise on broken streams', t => {
+tap.test('Test the library throws erorrs', t => {
     const readable = ost.newReadable()
-
-    ost.streamToPromise(readable)
+        .pipe(ost.find(() => true))
+    const promise = readable
+        .promise()
         .then(data => t.fail('should resolve as failed promise'))
-        .catch(err => {
-            t.same(err, 'Jabberwacky')
-            t.end()
-        })
-
+        .catch(err => t.same(err, 'Jabberwacky'))
     readable.emit('error', 'Jabberwacky')
+    return promise
 })
 
 tap.test('Test some if any value matches', t =>
-    ost.streamToPromise(
-        dataStream().pipe(ost.some(numericMatch))
-    )
-    .then(boolArr => t.same(...boolArr, true))
+    dataStream().pipe(ost.some(numericMatch))
+    .promise()
+    .then(boolArr => t.same(boolArr, true))
     .catch(t.fail)
 )
 
 tap.test('Test some when no value matches', t =>
-    ost.streamToPromise(
-        dataStream().pipe(ost.some(noNumericMatch))
-    )
-    .then(boolArr => t.same(...boolArr, false))
-    .catch(t.fail)
-)
-
-tap.test('Test some returns 1 element', t =>
-    ost.streamToPromise(
-        dataStream().pipe(ost.some(testFilter))
-    )
-    .then(objs => t.same(objs.length, 1))
+    dataStream().pipe(ost.some(noNumericMatch))
+    .promise()
+    .then(boolArr => t.same(boolArr, false))
     .catch(t.fail)
 )
 
 tap.test('Test find if value exits in the stream', t =>
-    ost.streamToPromise(
-        dataStream().pipe(ost.find(numericMatch))
-    )
-    .then(objs => t.same(...objs, data.find(numericMatch)))
+    dataStream().pipe(ost.find(numericMatch))
+    .promise()
+    .then(objs => t.same(objs, data.find(numericMatch)))
     .catch(t.fail)
 )
 
 tap.test('Test find if value does not exist in the stream', t =>
-    ost.streamToPromise(
-        dataStream().pipe(ost.find(noNumericMatch))
-    )
-    .then(objs => t.same(...objs, data.find(noNumericMatch)))
-    .catch(t.fail)
-)
-
-tap.test('Test find returns 1 element', t =>
-    ost.streamToPromise(
-        dataStream().pipe(ost.find(testFilter))
-    )
-    .then(objs => t.same(objs.length, 1))
+    dataStream().pipe(ost.find(noNumericMatch))
+    .promise()
+    .then(objs => t.same(objs, data.find(noNumericMatch)))
     .catch(t.fail)
 )
 

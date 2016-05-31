@@ -118,16 +118,6 @@ function promiseToStream(promise) {
     return newStream
 }
 
-function streamToPromise(stream) {
-    return new Promise((resolve, reject) => {
-        const arr = []
-        stream
-            .on('data', data => arr.push(data))
-            .on('error', reject)
-            .on('end', () => resolve(arr))
-    })
-}
-
 module.exports = {
     thru,
     thruParallel,
@@ -140,6 +130,5 @@ module.exports = {
     reduce,
     some,
     find,
-    promiseToStream,
-    streamToPromise
+    promiseToStream
 }

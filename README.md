@@ -133,4 +133,20 @@ ost.streamToPromise(fs.createReadStream('../test/data.json')
 ```
 
 
+#### find
+
+Find is super handy if we want to quickly check if vale/objects exists in the stream.
+Think about it as a grep on the steroids.
+
+```js
+ost.streamToPromise(fs.createReadStream('../test/data.json')
+    .pipe(jsonStream.parse('*'))
+    .pipe(ost.find(e => e.value > 6)))
+    .then(foundObj => {
+        // here you will get found first object that matches condition
+        // or undefined when there were none that matches
+    })
+```
+
+
 ## Please look at the tests for more use cases.

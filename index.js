@@ -55,6 +55,21 @@ function some(func) {
     })
 }
 
+function find(func) {
+    let i = 0
+    return thru(function (curr, cb) {
+        if (func(curr, i++)) {
+            cb(null, curr)
+            this.emit('end')
+        } else {
+            cb()
+        }
+    }, function () {
+        this.emit('data', undefined)
+        this.emit('end')
+    })
+}
+
 function reduce(func, acc) {
     let i = 0
     return thru((curr, cb) => {
@@ -130,6 +145,7 @@ module.exports = {
     filter,
     reduce,
     some,
+    find,
     promiseToStream,
     streamToPromise
 }

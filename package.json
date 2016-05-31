@@ -1,6 +1,6 @@
 {
   "name": "object-stream-tools",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "description": "Useful tools for manipulating object streams. Will be especially helpful to developers used to map - filter - reduce approach of nodejs arrays.",
   "main": "index.js",
   "scripts": {

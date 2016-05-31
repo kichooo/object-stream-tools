@@ -229,6 +229,22 @@ tap.test('Test some when no value matches', t =>
         .catch(t.fail)
 )
 
+tap.test('Test find if value exits in the stream', t =>
+    ost.streamToPromise(
+        dataStream().pipe(ost.find(el => el.value === 42))
+    )
+        .then(objs => t.same(...objs, data.find(el => el.value === 42)))
+        .catch(t.fail)
+)
+
+tap.test('Test find if value does not exist in the stream', t =>
+    ost.streamToPromise(
+        dataStream().pipe(ost.find(el => el.value === 'XXL'))
+    )
+        .then(objs => t.same(...objs, data.find(el => el.value === 'XXL')))
+        .catch(t.fail)
+)
+
 function dataStream() {
     return fs.createReadStream('./test/data.json')
         .pipe(jsonStream.parse('*'))

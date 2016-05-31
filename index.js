@@ -13,14 +13,13 @@ function thru(transform, flush) {
     })
 }
 
-function thruParallel(maxConcurrency, transform, flush) {
-    return through2Concurrent.obj({ maxConcurrency },
+const thruParallel = (maxConcurrency, transform, flush) =>
+    through2Concurrent.obj({ maxConcurrency },
         function(obj, enc, cb) {
             transform.call(this, obj, cb)
         },
         flush
     )
-}
 
 function map(func) {
     let i = 0

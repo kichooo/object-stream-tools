@@ -57,10 +57,10 @@ function some(func) {
 
 function find(func) {
     let i = 0
-    let found
+    let found = false
     return thru(function(curr, cb) {
-        if (found === undefined && func(curr, i++)) {
-            found = curr
+        if (!found && func(curr, i++)) {
+            found = true
             cb(null, curr)
             this.emit('end')
         } else {

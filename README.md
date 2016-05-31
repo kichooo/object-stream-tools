@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/kichooo/object-stream-tools.svg?branch=master)](https://travis-ci.org/kichooo/object-stream-tools)
+
 # object-stream-tools
 
 This package brings goodies of functional programming (map, filter, reduce) to node streams.

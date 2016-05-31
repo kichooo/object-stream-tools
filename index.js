@@ -44,8 +44,9 @@ function some(func) {
     let i = 0
     return thru(function(curr, cb) {
         if (func(curr, i++)) {
-            cb(null, true)
+            this.emit('data', true)
             this.emit('end')
+            this.end()
         } else {
             cb()
         }

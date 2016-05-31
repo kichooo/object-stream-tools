@@ -41,45 +41,32 @@ function filter(func) {
 }
 
 function some(func) {
-    let i = 0
-    return thru(function(curr, cb) {
-        if (func(curr, i++)) {
-            this.emit('data', true)
-            this.emit('end')
+    return reduce(function(acc, curr, i) {
+        if (func(curr, i)) {
             this.end()
-        } else {
-            cb()
+            return true
         }
-    }, function() {
-        this.emit('data', false)
-        this.emit('end')
-    })
+        return false
+    }, false)
 }
 
 function find(func) {
-    let i = 0
-    return thru(function(curr, cb) {
-        if (func(curr, i++)) {
-            this.emit('data', curr)
-            this.emit('end')
+    return reduce(function(acc, curr, i) {
+        if (func(curr, i)) {
             this.end()
-        } else {
-            cb()
+            return curr
         }
-    }, function() {
-        this.emit('data', undefined)
-        this.emit('end')
-    })
+    }, null)
 }
 
 function reduce(func, acc) {
     let i = 0
-    const thruReduce = thru((curr, cb) => {
+    const thruReduce = thru(function(curr, cb) {
         if (acc === undefined) {
             acc = curr
             return cb()
         }
-        acc = func(acc, curr, i++)
+        acc = func.call(this, acc, curr, i++)
         cb()
     }, function() {
         this.emit('data', acc)

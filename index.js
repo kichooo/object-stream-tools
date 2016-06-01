@@ -3,7 +3,17 @@
 const stream = require('stream')
 const through2Concurrent = require('through2-concurrent')
 
-function thru(transform, flush) {
+function thru(transform, flush, maxConcurrency) {
+    if (typeof flush === 'number') {
+        maxConcurrency = flush
+        flush = undefined;
+    }
+    return (maxConcurrency === undefined || maxConcurrency === 1) ?
+        through(transform, flush) :
+        throughParallel(transform, flush, maxConcurrency)
+}
+
+function through(transform, flush) {
     return new stream.Transform({
         objectMode: true,
         transform: function(obj, enc, cb) {
@@ -13,13 +23,14 @@ function thru(transform, flush) {
     })
 }
 
-const thruParallel = (maxConcurrency, transform, flush) =>
-    through2Concurrent.obj({ maxConcurrency },
+function throughParallel(transform, flush, maxConcurrency) {
+    return through2Concurrent.obj({ maxConcurrency },
         function(obj, enc, cb) {
             transform.call(this, obj, cb)
         },
         flush
     )
+}
 
 function map(func) {
     let i = 0
@@ -120,7 +131,6 @@ function promiseToStream(promise) {
 
 module.exports = {
     thru,
-    thruParallel,
     arrayToStream,
     streamToSet,
     streamToArray,

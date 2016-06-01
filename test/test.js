@@ -138,7 +138,7 @@ tap.test('Test reduce with no initial value', t =>
 tap.test('Test thruParallel', t => {
     let secondObjDone = false
     dataStream()
-        .pipe(ost.thruParallel(2, (obj, cb) => {
+        .pipe(ost.thru((obj, cb) => {
             if (obj.foo === 'bar') {
                 const interval = setInterval(() => {
                     if (secondObjDone) {
@@ -152,7 +152,7 @@ tap.test('Test thruParallel', t => {
                 secondObjDone = true
             }
             cb(null, obj.cats.length)
-        }))
+        }, 2))
         .pipe(ost.streamToArray())
         .on('data', objs => {
             const actualData = objs.sort()
@@ -178,11 +178,11 @@ tap.test('Test thru not losing this (so it can use this.push)', t =>
 
 tap.test('Test thruParallel not losing this (so it can use this.push)', t =>
     dataStream()
-    .pipe(ost.thruParallel(2, function(obj, cb) {
+    .pipe(ost.thru(function(obj, cb) {
         this.push(obj.cats.length)
         this.push(obj.cats.length * 2)
         cb()
-    }))
+    }, 2))
     .pipe(ost.streamToArray())
     .on('data', objs => t.same(objs.sort(), [3, 6, 3, 6, 2, 4].sort()))
     .on('error', t.fail)

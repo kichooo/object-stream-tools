@@ -108,31 +108,18 @@ fs.createReadStream('./test/data.json')
 Please note that if you do not pass initial value reduce function will start in (prev, curr, i) mode.
 [Objects/Array/Reduce](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce)
 
+#### Promises
 
-#### promise to stream
-
-It is a useful helper if you dealing with a lot of smaller data that are wrapped in Promise API, ex:
-
-```js
-ost.promiseToStream(myDbQueryThatReturnPromise())
-   .on('data', data => {
-       // here you will get a real stream that you can pipe
-   })
-```
-
-
-#### stream to promise
-
-Very handy when you want to consume streams but rest of your application logic uses promises. 
+Very handy when you want to aggregate streams using reduce or derrivated calls. Keep in mind .promise() will not work if you use only ost.map or ost.reduce features - as they do not aggregate. 
 
 ```js
-ost.streamToPromise(
-    fs.createReadStream('../test/data.json')
-        .pipe(jsonStream.parse('*'))
-        .pipe(ost.filter(e => e.value > 6))
-).then(data => {
-    // here you will get filtered objects
-})
+fs.createReadStream('../test/data.json')
+    .pipe(jsonStream.parse('*'))
+    .pipe(ost.streamToArray())
+    .promise()
+    .then(data => {
+        // here you will get your aggregated data - array of values.
+    })
 ```
 
 
@@ -142,14 +129,13 @@ Find is super handy if we want to quickly check if vale/objects exists in the st
 Think about it as a grep on the steroids.
 
 ```js
-ost.streamToPromise(
-    fs.createReadStream('../test/data.json')
-        .pipe(jsonStream.parse('*'))
-        .pipe(ost.find(e => e.value > 6))
-).then(foundObj => {
-    // here you will get found first object that matches condition
-    // or undefined when there were none that matches
-})
+fs.createReadStream('../test/data.json')
+    .pipe(jsonStream.parse('*'))
+    .pipe(ost.find(e => e.value > 6))
+    .then(foundObj => {
+        // here you will get found first object that matches condition
+        // or undefined when there were none that matches
+    })
 ```
 
 

@@ -37,7 +37,7 @@ tap.test('Test ost.streamToSet() returns unique values', t =>
     .pipe(ost.map(obj => obj.szop))
     .pipe(ost.streamToSet())
     .on('data', uniqueSet =>
-        t.same(Array.from(uniqueSet.values()), ['pracz', 'niepracz'])
+        t.same(Array.from(uniqueSet.values().sort()), ['pracz', 'niepracz'].sort())
     )
     .on('error', t.fail)
     .on('end', t.end)
